@@ -1,0 +1,19 @@
+.footer {
+    .footer-main-content {
+        background-color: $color-base-blue;
+        height: 200px;
+        p {
+            margin-bottom: 0;
+            color: $color-white;
+            font-weight: bold;
+        }
+    }
+    .footer-copy-content {
+        background-color: $color-base-dark-yellow;
+        height: 40px;
+        p {
+            margin-bottom: 0;
+            color: $color-white;
+        }
+    }
+}
