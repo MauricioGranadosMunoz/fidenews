@@ -5,7 +5,7 @@ export const UserAdminPage = () => {
     <>
     <h1>UserAdminPage</h1>
     <hr/>
-    <Link to={'/admin'}>Back</Link>
+    <Link to={'/'}>Back</Link>
     </>
   )
 }
