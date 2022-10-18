@@ -4,3 +4,24 @@
     margin: 20px auto;
     padding: 0 12px;
 }
+
+.page-header {
+   .carousel-item {
+        img {
+            max-height: 500px;
+            object-fit: cover;
+            filter: brightness(50%);
+        }
+   }
+}
+
+.main-header {
+    img {
+        max-height: 500px;
+        object-fit: cover;
+    }
+}
+.main-title {
+    margin-top: 10px;
+    margin-bottom: 35px;
+}
