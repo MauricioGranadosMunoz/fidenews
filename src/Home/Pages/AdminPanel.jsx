@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import { LinkContainer } from 'react-router-bootstrap'
 
 
 
@@ -89,8 +90,11 @@ export const AdminPanel = () => {
                             <tr><td>Id Noticia</td><td>Titulo Noticia</td><td><Nav.Link href="/EditNews">Editar</Nav.Link></td></tr>
                         </tbody>
                     </Table>
-
+                    <LinkContainer variant="primary" to="/">
+                        <Button variant="outline-primary" className='float-right' style={{ float: 'right' }} >Volver</Button>
+                    </LinkContainer>
                 </div>
+
             </HomeLayout>
         </>
     )
