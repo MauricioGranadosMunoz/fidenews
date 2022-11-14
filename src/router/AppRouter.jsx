@@ -4,6 +4,8 @@ import { HomePage } from "../Home/Pages/HomePage"
 import { SingleNew } from "../Home/Pages/SingleNew"
 import { AdminPanel } from "../Home/Pages/AdminPanel"
 import { PrivateRoute } from "./PrivateRoute"
+import { EditUser } from "../Home/Pages/EditUser"
+import { EditNews } from "../Home/Pages/EditNews"
 
 export const AppRouter = () => {
   return (
@@ -17,6 +19,8 @@ export const AppRouter = () => {
             </PrivateRoute>
           } />
           <Route path='/AdminPanel' element={ <AdminPanel/> }/>
+          <Route path='/EditUser' element={ <EditUser/> }/>
+          <Route path='/EditNews' element={ <EditNews/> }/>
       </Routes>
     </>
   )
