@@ -129,7 +129,7 @@ EXCEPTION
     dbms_output.put_line ('Error while status as SUCCESS '); 
 END;  
 /  
-exec INSERT_UPDATE_REACCIONES(0,'COMENTARIO','QUE CHIVA',1,2)
+exec SP_INSERT_UPDATE_REACCIONES(0,'COMENTARIO','QUE CHIVA',1,2)
 select * from ROLS;
 exec INSERT_UPDATE_ROLS(4,'COMENTARIO','QUE BUENO',1,2)
 
