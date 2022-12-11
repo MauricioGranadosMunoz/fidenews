@@ -1,110 +1,104 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from 'react-bootstrap/Button'
 import { LinkContainer } from 'react-router-bootstrap'
 import { HomeLayout } from '../layout/HomeLayout'
 import Carousel from 'react-bootstrap/Carousel'
 import Card from 'react-bootstrap/Card'
+import { useForm } from '../../hooks/useForm';
+
+import { getCategorias, getNoticiasByFilter } from '../../store/slices/news';
+import { useState } from 'react'
 
 export const HomePage = () => {
+  const dispatch = useDispatch();
+  const { noticiasHeader, noticiasFilterHome, categorias } = useSelector(state => state.news);
+
+  const [showFilterBox, SetShowFilterBox] = useState(true)
+  useEffect(() => {
+    dispatch(getCategorias());
+    dispatch(getNoticiasByFilter({}));
+  }, [])
+
+  const { cantidadNoticiasFiltrar, onInputChange, formState } = useForm({
+    cantidadNoticiasFiltrar: 5,
+    orderNoticiasFiltrar: 'ASC',
+    orderSubcategoria: 1,
+  });
+
+  const filtroButtonOnClick = () =>{
+    dispatch(getNoticiasByFilter( formState ));
+  }
+
   return (
    <>
     <HomeLayout hasHeader={true}>
     <Carousel className='page-header animate__animated animate__fadeIn'>
-      <Carousel.Item >
-        <img
-          className="d-block w-100"
-          src="https://cdn.ufidelitas.ac.cr/wp-content/uploads/2021/08/07081942/Untitled-5-1-1240x780-1.jpg"
-          alt="First slide"
-        />
-        <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="https://cdn.ufidelitas.ac.cr/wp-content/uploads/2021/08/07081942/image003.jpeg"
-          alt="Second slide"
-        />
-        <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="https://www.larepublica.net/storage/images/2018/01/08/201801080850560.fidelitas-f.jpg"
-          alt="Third slide"
-        />
-        <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
-        </Carousel.Caption>
-      </Carousel.Item>
+      {
+        noticiasHeader.map(({ NT_NOTICIA_ID, NT_TITULO, NT_DESCRIPCION })=>(
+          <Carousel.Item key={NT_NOTICIA_ID}>
+            <img
+              className="d-block w-100"
+              src="https://www.larepublica.net/storage/images/2018/01/08/201801080850560.fidelitas-f.jpg"
+              alt="Third slide"
+            />
+            <Carousel.Caption>
+              <h3>{ NT_TITULO }</h3>
+              <p>{ NT_DESCRIPCION }</p>
+            </Carousel.Caption>
+          </Carousel.Item>
+        ))
+      }
     </Carousel>
     <div className='main-content animate__animated animate__fadeIn'>
         <h1 className='main-title'>Noticias Recientes</h1>
+        <button type="button" className="btn btn-yellow mb-3" onClick={ () => SetShowFilterBox(!showFilterBox) }>Mostrar Filtros</button>
 
+        <div className={`filter-box mb-4 animate__animated animate__fadeIn ${showFilterBox && 'd-none' }`}>
+          <button type="button" className="btn btn-success mb-3" onClick={ filtroButtonOnClick }>Filtrar</button>
+              <div className="form-group mb-3">
+                <label>Cantidad Noticias</label>
+                <input type="cantidadNoticiasFiltrar" name="cantidadNoticiasFiltrar" value={ cantidadNoticiasFiltrar } className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Cantidad" onChange={ onInputChange }/>
+              </div>
+              <div className="form-group">
+                <label>Orden de noticias</label>
+                <select className='form-select' name="orderNoticiasFiltrar" aria-label="Orden de noticias" onChange={ onInputChange }>
+                  <option defaultValue value="ASC">Más reciente</option>
+                  <option value="DESC">Más antigua</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Seleccionar Categoria</label>
+                <select className='form-select' name="orderSubcategoria" aria-label="Orden de noticias" onChange={ onInputChange }>
+                  {
+                    categorias.map(({ SBC_SUBCATEGORIA_ID, SBC_DESCRIPCION }) => (
+                      <option value={ SBC_SUBCATEGORIA_ID } key={ SBC_SUBCATEGORIA_ID }>{ SBC_DESCRIPCION }</option>
+                    ))
+                  }
+                </select>
+              </div>
 
-          <div className='d-flex flex-row justify-content-between'>
-          <Card style={{ width: '18rem' }}>
-            <Card.Img variant="top" src="https://p4.wallpaperbetter.com/wallpaper/1022/622/369/classroom-education-learning-lecture-wallpaper-preview.jpg" />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up the
-                bulk of the card's content.
-              </Card.Text>
-              <LinkContainer variant="primary" to="/new/123abc456xyz">
-                <Button>Leer Noticia</Button>
-              </LinkContainer>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Img variant="top" src="https://p4.wallpaperbetter.com/wallpaper/1022/622/369/classroom-education-learning-lecture-wallpaper-preview.jpg" />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up the
-                bulk of the card's content.
-              </Card.Text>
-              <LinkContainer variant="primary" to="/new/123abc456xyz">
-                <Button>Leer Noticia</Button>
-              </LinkContainer>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Img variant="top" src="https://p4.wallpaperbetter.com/wallpaper/1022/622/369/classroom-education-learning-lecture-wallpaper-preview.jpg" />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up the
-                bulk of the card's content.
-              </Card.Text>
-              <LinkContainer variant="primary" to="/new/123abc456xyz">
-                <Button>Leer Noticia</Button>
-              </LinkContainer>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Img variant="top" src="https://p4.wallpaperbetter.com/wallpaper/1022/622/369/classroom-education-learning-lecture-wallpaper-preview.jpg" />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up the
-                bulk of the card's content.
-              </Card.Text>
-              <LinkContainer variant="primary" to="/new/123abc456xyz">
-                <Button>Leer Noticia</Button>
-              </LinkContainer>
-            </Card.Body>
-          </Card>
-          </div>
+          {/* <TextField label="Correo Electrónico" type="email" name="email" value={ email } onChange={ onInputChange } fullWidth/> */}
+        </div>
 
-    </div>
+          <div className='d-flex flex-row cards-home-container'>
+          {
+            noticiasFilterHome.map(({ NT_NOTICIA_ID, NT_TITULO, NT_DESCRIPCION, NT_VISITA,  NT_REPORTERO_NOMBRE })=>(
+              <Card className='animate__animated animate__fadeIn' style={{ width: '18rem' }} key={ NT_NOTICIA_ID }>
+                <Card.Img variant="top" src="https://p4.wallpaperbetter.com/wallpaper/1022/622/369/classroom-education-learning-lecture-wallpaper-preview.jpg" />
+                <Card.Body>
+                  <Card.Title>{ NT_TITULO }</Card.Title>
+                  <Card.Text>{ NT_DESCRIPCION }</Card.Text>
+                  <Card.Text>VISTAS: { NT_VISITA }</Card.Text>                 
+                  <LinkContainer className="btn btn-info" variant="primary" to={`/new/${NT_NOTICIA_ID}`}>
+                    <Button>Leer Noticia</Button>
+                  </LinkContainer>
+                </Card.Body>
+              </Card>
+            ))
+          }
+        </div>
+      </div>
     </HomeLayout>
    </>
   )

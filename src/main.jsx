@@ -8,11 +8,11 @@ import { NewsApp } from './NewsApp'
 import 'animate.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <BrowserRouter>
       <Provider store={ store }>
         <NewsApp />
       </Provider>
     </BrowserRouter>
-  </React.StrictMode>
+  // </React.StrictMode>
 )
