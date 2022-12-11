@@ -1,10 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const newSlice = createSlice({
-  name: 'new',
+  name: 'noticias',
   initialState: {
     page: 0,
-    news: [],
+    noticiasHeader: [],
+    noticiasFilterHome: [],
+    noticiaSelected: [],
+    categorias: [],
     isLoading: false
   },
   reducers: {
@@ -13,10 +16,17 @@ export const newSlice = createSlice({
     },
     setNews: ( state, action ) => {
       state.isLoading = false;
-      state.page = action.payload.page
-      state.news = action.payload.news
+      state.page = action.payload.page;
+      state.noticiasHeader = action.payload.noticiasHeader;
+      state.noticiasFilterHome = action.payload.noticiasFilterHome;
+    },
+    setNoticiaSelected: ( state, action ) => {
+      state.noticiaSelected = action.payload.noticiaSelected;
+    },
+    setCategorias: ( state, action ) => {
+      state.categorias = action.payload.categorias;
     }
   }
 });
 
-export const { startLoadingNews, setNews } = newSlice.actions;
+export const { startLoadingNews, setNews, setNoticiaSelected, setCategorias } = newSlice.actions;
