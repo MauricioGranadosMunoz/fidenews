@@ -68,9 +68,15 @@
 
 .cards-home-container {
     gap: 4%;
+    flex-wrap: wrap;
+    justify-content: center;
     &.admin-panel {
         max-width: 1000px;
         margin: 0 auto 40px;
+        flex-wrap: wrap;
+    }
+    .card {
+        margin-bottom: 20px;
     }
 }
 

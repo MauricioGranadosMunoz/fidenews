@@ -1,29 +1,33 @@
 import { useEffect, useState } from 'react';
 import { HomeLayout } from '../layout/HomeLayout'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllNoticias, getNoticiaById, getNoticiasByFilter, setModalState } from '../../store/slices/news';
+import { eliminarNoticia, getAllNoticias, getNoticiaById, getNoticiasByFilter, guardarNoticia, setModalState } from '../../store/slices/news';
 import { Button, Card, Modal } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useForm } from '../../hooks/useForm';
 
 export const AdminPanel = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getAllNoticias());
-      }, [])
 
     const [updateModal, setUpdateModal] = useState(false);
     const [verModal, setVerModal] = useState(false);
     const [deleteModal, setFeleteModal] = useState(false);
     const [addModal, setaddModal] = useState(false);
 
-    const { noticiaSelected, modalOpen, noticias } = useSelector(state => state.news);
+    const { noticiaSelected = { }, modalOpen, noticias } = useSelector(state => state.news);
     const { NOTICIA_ID, IMAGEN, TITULO, DESCRIPCION, PROMEDIO, REPORTERO, SUBCATEGORIA, CATEGORIA, NT_FECHA_CREACION, VISTAS } = noticiaSelected;
 
-    const { noticiaTitulo, noticiaDescripcion, onInputChange, formState } = useForm({
+    const { noticiaTitulo, noticiaDescripcion, noticiaImagen, noticiaSubcategoria, noticiaReportero, onInputChange, formState } = useForm({
+        noticiaImagen: IMAGEN,
         noticiaTitulo: TITULO,
-        noticiaDescripcion: DESCRIPCION
+        noticiaDescripcion: DESCRIPCION,
+        noticiaSubcategoria: SUBCATEGORIA,
+        noticiaReportero: REPORTERO
     });
+
+    useEffect(() => {
+        dispatch(getAllNoticias());
+      }, [noticias])
 
 
     const handleClose = () => {
@@ -39,7 +43,6 @@ export const AdminPanel = () => {
         setUpdateModal(false);
         setaddModal(false);
         setVerModal(true);
-        console.log(verModal)
     };
     const handleShowEditar = (e) => {
         dispatch(getNoticiaById(e.target.getAttribute('noticia-id')))
@@ -65,28 +68,17 @@ export const AdminPanel = () => {
         setVerModal(false);
     };
 
-    const { noticiasFilterHome } = useSelector(state => state.news);
-    
-
-    const CamposBoxDelete = () => {
-        return (
-            <>
-            <Modal.Body>
-            <div className="form-group mb-4">
-                <label>TITULO</label>
-                <input defaultValue={ TITULO } name="noticiaId" className="form-control" onChange={ onInputChange } disabled/>
-            </div>
-            </Modal.Body>
-                    <Modal.Footer>
-                    <Button className="btn btn-danger mb-3"  variant="secondary" onClick={handleClose}>
-                        Sí deseo eliminarla
-                    </Button>
-            </Modal.Footer>
-            </>
-
-        )
+    const onSaveNotcia = () => {
+        dispatch(guardarNoticia(formState));
+        handleClose();
+    }
+    const onDeleteNotcia = (e) => {
+        dispatch(eliminarNoticia(NOTICIA_ID));
+        handleClose();
     }
 
+    const { noticiasFilterHome } = useSelector(state => state.news);
+    
     return (
         <>
             <HomeLayout hasHeader={ true }>
@@ -146,6 +138,10 @@ export const AdminPanel = () => {
                     <div className={`${!addModal && 'd-none' }`}>
                         <Modal.Body>
                         <div className="form-group mb-4">
+                        <div className="form-group mb-4">
+                            <label>LINK IMAGEN</label>
+                            <input value={ noticiaImagen } name="noticiaImagen" className="form-control" onChange={ onInputChange }/>
+                        </div>
                             <label>Titulo de NOTICIA</label>
                             <input value={ noticiaTitulo } name="noticiaTitulo" className="form-control" onChange={ onInputChange }/>
                         </div>
@@ -153,9 +149,17 @@ export const AdminPanel = () => {
                             <label>DESCRIOCION NOTICIA</label>
                             <input value={ noticiaDescripcion } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
                         </div>
+                        <div className="form-group mb-4">
+                            <label>REPORTERO ID</label>
+                            <input value={ noticiaReportero } name="noticiaReportero" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>SUBCATEGORIA ID</label>
+                            <input value={ noticiaSubcategoria } name="noticiaSubcategoria" className="form-control" onChange={ onInputChange }/>
+                        </div>
                         </Modal.Body>
                                 <Modal.Footer>
-                                <Button className="btn btn-success mb-3"  variant="secondary" onClick={handleClose}>
+                                <Button className="btn btn-success mb-3"  variant="secondary" onClick={ onSaveNotcia }>
                                     Agregar Noticia
                                 </Button>
                         </Modal.Footer>
@@ -208,9 +212,19 @@ export const AdminPanel = () => {
                                 </Button>
                         </Modal.Footer>
                     </div>
-                    {
-                        deleteModal && <CamposBoxDelete/> 
-                    }
+                    <div className={`${!deleteModal && 'd-none' }`}>
+                        <Modal.Body>
+                        <div className="form-group mb-4">
+                            <label>TITULO</label>
+                            <input defaultValue={ TITULO } name="noticiaId" className="form-control" onChange={ onInputChange } disabled/>
+                        </div>
+                        </Modal.Body>
+                                <Modal.Footer>
+                                <Button className="btn btn-danger mb-3"  variant="secondary" onClick={ onDeleteNotcia }>
+                                    Sí deseo eliminarla
+                                </Button>
+                        </Modal.Footer>
+                        </div>
                 </Modal>
 
             </HomeLayout>
