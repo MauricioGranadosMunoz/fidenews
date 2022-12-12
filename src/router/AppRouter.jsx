@@ -6,6 +6,7 @@ import { AdminPanel } from "../Home/Pages/AdminPanel"
 import { PrivateRoute } from "./PrivateRoute"
 import { EditUser } from "../Home/Pages/EditUser"
 import { EditNews } from "../Home/Pages/EditNews"
+import { LoginPage } from "../Home/Pages/LoginPage"
 
 export const AppRouter = () => {
   return (
@@ -18,7 +19,12 @@ export const AppRouter = () => {
               <AdminRoutes/>
             </PrivateRoute>
           } />
-          <Route path='/AdminPanel' element={ <AdminPanel/> }/>
+          <Route path="/admin/AdminPanel" element={
+            <PrivateRoute>
+              <AdminPanel/>
+            </PrivateRoute>
+          } />
+          <Route path='/login' element={ <LoginPage/> }/>
           <Route path='/EditUser' element={ <EditUser/> }/>
           <Route path='/EditNews' element={ <EditNews/> }/>
       </Routes>
