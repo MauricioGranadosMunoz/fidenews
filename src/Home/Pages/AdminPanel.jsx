@@ -1,99 +1,217 @@
+import { useEffect, useState } from 'react';
 import { HomeLayout } from '../layout/HomeLayout'
-import Table from 'react-bootstrap/Table';
-import Nav from 'react-bootstrap/Nav'
-
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import { LinkContainer } from 'react-router-bootstrap'
-
-
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllNoticias, getNoticiaById, getNoticiasByFilter, setModalState } from '../../store/slices/news';
+import { Button, Card, Modal } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { useForm } from '../../hooks/useForm';
 
 export const AdminPanel = () => {
-    const [value, setValue] = useState('Seleccione una opcion de búsqueda');
-    const [valuex, setValuex] = useState('Seleccione una opcion de búsqueda');
-    const handleSelect = (e) => {
-        setValue(e)
-    }
-    const handleSelectx = (x) => {
-        setValuex(x)
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getAllNoticias());
+      }, [])
+
+    const [updateModal, setUpdateModal] = useState(false);
+    const [verModal, setVerModal] = useState(false);
+    const [deleteModal, setFeleteModal] = useState(false);
+    const [addModal, setaddModal] = useState(false);
+
+    const { noticiaSelected, modalOpen, noticias } = useSelector(state => state.news);
+    const { NOTICIA_ID, IMAGEN, TITULO, DESCRIPCION, PROMEDIO, REPORTERO, SUBCATEGORIA, CATEGORIA, NT_FECHA_CREACION, VISTAS } = noticiaSelected;
+
+    const { noticiaTitulo, noticiaDescripcion, onInputChange, formState } = useForm({
+        noticiaTitulo: TITULO,
+        noticiaDescripcion: DESCRIPCION
+    });
+
+
+    const handleClose = () => {
+        dispatch(setModalState({
+            modalOpen: false
+        })); 
+    };
+
+    const handleShowVer = (e) => {
+        dispatch(getNoticiaById(e.target.getAttribute('noticia-id')))
+
+        setFeleteModal(false);
+        setUpdateModal(false);
+        setaddModal(false);
+        setVerModal(true);
+        console.log(verModal)
+    };
+    const handleShowEditar = (e) => {
+        dispatch(getNoticiaById(e.target.getAttribute('noticia-id')))
+
+        setFeleteModal(false);
+        setUpdateModal(true);
+        setaddModal(false);
+        setVerModal(false);
+    };
+    const handleShowEliminar = (e) => {
+        dispatch(getNoticiaById(e.target.getAttribute('noticia-id')))
+        setFeleteModal(true);
+        setUpdateModal(false);
+        setaddModal(false);
+        setVerModal(false);
+    };
+    
+    const handleShowAgregar = (e) => {
+        dispatch(getNoticiaById(1))
+        setFeleteModal(false);
+        setUpdateModal(false);
+        setaddModal(true);
+        setVerModal(false);
+    };
+
+    const { noticiasFilterHome } = useSelector(state => state.news);
+    
+
+    const CamposBoxDelete = () => {
+        return (
+            <>
+            <Modal.Body>
+            <div className="form-group mb-4">
+                <label>TITULO</label>
+                <input defaultValue={ TITULO } name="noticiaId" className="form-control" onChange={ onInputChange } disabled/>
+            </div>
+            </Modal.Body>
+                    <Modal.Footer>
+                    <Button className="btn btn-danger mb-3"  variant="secondary" onClick={handleClose}>
+                        Sí deseo eliminarla
+                    </Button>
+            </Modal.Footer>
+            </>
+
+        )
     }
 
     return (
         <>
-            <HomeLayout hasHeader={true}>
+            <HomeLayout hasHeader={ true }>
+            <h1 className='main-title admin-title'>Noticias en sistema</h1>
+            <button type="button" className="btn btn-success mb-3 admin-add-cta" onClick= { handleShowAgregar }>Agregar Noticia</button>
+            <div className='d-flex flex-row cards-home-container admin-panel'>
+                {
+                    noticias.map(({ NT_NOTICIA_ID, NT_TITULO, NT_DESCRIPCION, NT_VISITA, NT_IMAGEN })=>(
+                    <Card className='animate__animated animate__fadeIn' style={{ width: '18rem' }} key={ NT_NOTICIA_ID }>
+                        <Card.Img variant="top" src={ NT_IMAGEN } />
+                        <Card.Body>
+                        <Card.Title>{ NT_TITULO }</Card.Title>
+                        <Card.Text>{ NT_DESCRIPCION }</Card.Text>
+                        <Card.Text>VISTAS: { NT_VISITA }</Card.Text> 
+                        </Card.Body>
+                        <hr/>
+                            <div className="card-cta-container">
+                                <p className="card-cta-opciones">Opciones de noticia</p>
+                                <button className="btn btn-success" noticia-id= { NT_NOTICIA_ID } onClick= { handleShowVer }>
+                                    <svg noticia-id= { NT_NOTICIA_ID } xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-fill" viewBox="0 0 16 16">
+                                        <path noticia-id= { NT_NOTICIA_ID } d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                        <path noticia-id= { NT_NOTICIA_ID } d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                    </svg>
+                                </button>
+                                <button className="btn btn-warning editNoticiasModalButton" noticia-id= { NT_NOTICIA_ID } onClick= { handleShowEditar }>
+                                    <svg noticia-id= { NT_NOTICIA_ID } xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                        <path noticia-id= { NT_NOTICIA_ID } d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                                    </svg>
+                                </button>
+                                <button className="btn btn-danger" noticia-id= { NT_NOTICIA_ID } onClick= { handleShowEliminar }>
+                                    <svg noticia-id= { NT_NOTICIA_ID } xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path noticia-id= { NT_NOTICIA_ID } d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                    </Card>
+                    ))
+                }
+            </div>
 
-                <div className='main-content animate__animated animate__fadeIn'>
-                    <h1 className='main-title'>Panel de administrador</h1>
+                <Modal show={modalOpen} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        {
+                            deleteModal && <Modal.Title>DESEA ELIMINAR NOTICIA</Modal.Title>
+                        }
+                        {
+                            verModal && <Modal.Title>VER NOTICIA</Modal.Title>
+                        }
+                        {
+                            addModal && <Modal.Title>AGREGAR NOTICIA</Modal.Title>
+                        }
+                        {
+                            updateModal && <Modal.Title>ACTUALIZAR NOTICIA</Modal.Title>
+                        }
+                    </Modal.Header>
 
-                    <InputGroup>
-                        <DropdownButton
-                            value="Seleccione una opcion de busqueda"
-                            variant="outline-secondary"
-                            title={valuex}
-                            id="input-group-dropdown-3"
-                            onSelect={handleSelectx}
-                        >
-                            <Dropdown.Item eventKey="Id">Id</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item eventKey="Nombre">Nombre</Dropdown.Item>
-                        </DropdownButton>
-                        <Form.Control aria-label="Text input with 2 dropdown buttons" />
-                        <Button variant="outline-secondary" id="button-addon1">
-                            Buscar
-                        </Button>
-                    </InputGroup>
+                    <div className={`${!addModal && 'd-none' }`}>
+                        <Modal.Body>
+                        <div className="form-group mb-4">
+                            <label>Titulo de NOTICIA</label>
+                            <input value={ noticiaTitulo } name="noticiaTitulo" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>DESCRIOCION NOTICIA</label>
+                            <input value={ noticiaDescripcion } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        </Modal.Body>
+                                <Modal.Footer>
+                                <Button className="btn btn-success mb-3"  variant="secondary" onClick={handleClose}>
+                                    Agregar Noticia
+                                </Button>
+                        </Modal.Footer>
+                    </div>
 
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>Usuarios</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Id usuario</td><td>Usuario</td><td><Nav.Link href="/EditUser">Editar</Nav.Link></td></tr>
-                        </tbody>
-                    </Table>
-                </div>
+                    <div className={`${!verModal && 'd-none' }`}>
+                        <Modal.Body>
+                        <div className="form-group mb-4">
+                            <label>Noticias ID</label>
+                            <input defaultValue={ NOTICIA_ID } className="form-control" onChange={ onInputChange } disabled/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>Noticias ID</label>
+                            <input defaultValue={ TITULO } className="form-control" onChange={ onInputChange } disabled/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>TITULO</label>
+                            <input defaultValue={ DESCRIPCION } className="form-control" onChange={ onInputChange } disabled/>
+                        </div>
+                        </Modal.Body>
+                                <Modal.Footer>
+                                <Button className="btn btn-yellow mb-3"  variant="secondary" onClick={handleClose}>
+                                    Cerrar
+                                </Button>
+                        </Modal.Footer>
+                    </div>
 
-                <div className='main-content animate__animated animate__fadeIn'>
-                    <InputGroup>
-                        <DropdownButton
-                            value="Seleccione una opcion de busqueda"
-                            variant="outline-secondary"
-                            title={value}
-                            id="input-group-dropdown-3"
-                            onSelect={handleSelect}
-                        >
-                            <Dropdown.Item eventKey="Autor">Autor</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item eventKey="Fecha">Fecha</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item eventKey="Categoria">Categoria</Dropdown.Item>
-                        </DropdownButton>
-                        <Form.Control aria-label="Text input with 2 dropdown buttons" />
-                        <Button variant="outline-secondary" id="button-addon1">
-                            Buscar
-                        </Button>
-                    </InputGroup>
 
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>Noticias</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Id Noticia</td><td>Titulo Noticia</td><td><Nav.Link href="/EditNews">Editar</Nav.Link></td></tr>
-                        </tbody>
-                    </Table>
-                    <LinkContainer variant="primary" to="/">
-                        <Button variant="outline-primary" className='float-right' style={{ float: 'right' }} >Volver</Button>
-                    </LinkContainer>
-                </div>
+                    <div className={`${!updateModal && 'd-none' }`}>
+                        <Modal.Body>
+                        <div className="form-group mb-4">
+                            <label>Noticia ID</label>
+                            <input defaultValue={ NOTICIA_ID } className="form-control" onChange={ onInputChange } disabled/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>TITULO</label>
+                            <input value={ noticiaTitulo } defaultValue={ NOTICIA_ID } name="noticiaTitulo" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>DESCRIPCION NOTICIA</label>
+                            <input value={ noticiaDescripcion } defaultValue={ DESCRIPCION } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        </Modal.Body>
+                                <Modal.Footer>
+                                <Button className="btn btn-yellow mb-3"  variant="secondary" onClick={handleClose}>
+                                    Cerrar
+                                </Button>
+                                <Button className='btn btn-success mb-3' variant="primary" onClick={handleClose}>
+                                    Guardar Cambios
+                                </Button>
+                        </Modal.Footer>
+                    </div>
+                    {
+                        deleteModal && <CamposBoxDelete/> 
+                    }
+                </Modal>
 
             </HomeLayout>
         </>

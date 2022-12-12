@@ -4,11 +4,14 @@ export const newSlice = createSlice({
   name: 'noticias',
   initialState: {
     page: 0,
+    noticias: [],
+    usuario: [],
     noticiasHeader: [],
     noticiasFilterHome: [],
     noticiaSelected: [],
     categorias: [],
-    isLoading: false
+    isLoading: false,
+    modalOpen: false,
   },
   reducers: {
     startLoadingNews: ( state ) => {
@@ -22,11 +25,21 @@ export const newSlice = createSlice({
     },
     setNoticiaSelected: ( state, action ) => {
       state.noticiaSelected = action.payload.noticiaSelected;
+      state.modalOpen = action.payload.modalOpen;
     },
     setCategorias: ( state, action ) => {
       state.categorias = action.payload.categorias;
+    },
+    setModalState: ( state, action ) => {
+      state.modalOpen = action.payload.modalOpen;
+    },
+    setAllNoticias: ( state, action ) => {
+      state.noticias = action.payload.noticias;
+    },
+    setUsuarioLogged: ( state, action ) => {
+      state.usuario = action.payload.usuario;
     }
   }
 });
 
-export const { startLoadingNews, setNews, setNoticiaSelected, setCategorias } = newSlice.actions;
+export const { startLoadingNews, setNews, setNoticiaSelected, setCategorias, setModalState, setAllNoticias, setUsuarioLogged } = newSlice.actions;
