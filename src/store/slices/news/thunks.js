@@ -139,6 +139,26 @@ const eliminarNoticia = ( noticia_id = 1) => {
         dispatch(getAllNoticias());
 }}
 
+const updateNoticia = ({ noticiaId, noticiaImagen, noticiaTitulo, noticiaDescripcion, noticiaSubcategoria, noticiaReportero  }) => {
+    return async( dispatch, getState ) => {
+        const { data } = await noticiasApi.post(
+            `/actualizar-noticia.php`,
+            {
+                "UPDATE_TYPE": 4, 
+                "NT_NOTICIA_ID": noticiaId,
+                "NT_RPT_REPORTERO_ID": noticiaReportero,
+                "NT_LINK_IMAGEN": noticiaImagen,
+                "NT_TITULO": noticiaTitulo,
+                "NT_DESCRIPCION": noticiaDescripcion,
+                "NT_SBC_SUBCATEGORIA_ID": noticiaSubcategoria,
+                "NT_PROMEDIO": 0,
+                "NT_VISITA":1,
+                "NT_CANTIDAD":2
+            }
+        )
+        dispatch(getAllNoticias());
+}}
+
 
 
 export {
@@ -150,7 +170,8 @@ export {
     loginUsuario,
     checkUsuario,
     guardarNoticia,
-    eliminarNoticia
+    eliminarNoticia,
+    updateNoticia
 }
 
 

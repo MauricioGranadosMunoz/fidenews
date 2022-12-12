@@ -16,8 +16,8 @@ export const AdminPanel = () => {
 
     const { noticiaSelected = { }, modalOpen, noticias } = useSelector(state => state.news);
     const { NOTICIA_ID, IMAGEN, TITULO, DESCRIPCION, PROMEDIO, REPORTERO, SUBCATEGORIA, CATEGORIA, NT_FECHA_CREACION, VISTAS } = noticiaSelected;
-
     const { noticiaTitulo, noticiaDescripcion, noticiaImagen, noticiaSubcategoria, noticiaReportero, onInputChange, formState } = useForm({
+        noticiaId: NOTICIA_ID,
         noticiaImagen: IMAGEN,
         noticiaTitulo: TITULO,
         noticiaDescripcion: DESCRIPCION,
@@ -76,9 +76,12 @@ export const AdminPanel = () => {
         dispatch(eliminarNoticia(NOTICIA_ID));
         handleClose();
     }
+    const onUpdateNotcia = (e) => {
+        dispatch(getAllNoticias(formState));
+        handleClose();
+    }
 
     const { noticiasFilterHome } = useSelector(state => state.news);
-    
     return (
         <>
             <HomeLayout hasHeader={ true }>
@@ -86,9 +89,9 @@ export const AdminPanel = () => {
             <button type="button" className="btn btn-success mb-3 admin-add-cta" onClick= { handleShowAgregar }>Agregar Noticia</button>
             <div className='d-flex flex-row cards-home-container admin-panel'>
                 {
-                    noticias.map(({ NT_NOTICIA_ID, NT_TITULO, NT_DESCRIPCION, NT_VISITA, NT_IMAGEN })=>(
+                    noticias.map(({ NT_NOTICIA_ID, NT_TITULO, NT_DESCRIPCION, NT_VISITA, NT_LINK_IMAGEN })=>(
                     <Card className='animate__animated animate__fadeIn' style={{ width: '18rem' }} key={ NT_NOTICIA_ID }>
-                        <Card.Img variant="top" src={ NT_IMAGEN } />
+                        <Card.Img variant="top" src={ NT_LINK_IMAGEN } />
                         <Card.Body>
                         <Card.Title>{ NT_TITULO }</Card.Title>
                         <Card.Text>{ NT_DESCRIPCION }</Card.Text>
@@ -138,16 +141,16 @@ export const AdminPanel = () => {
                     <div className={`${!addModal && 'd-none' }`}>
                         <Modal.Body>
                         <div className="form-group mb-4">
-                        <div className="form-group mb-4">
                             <label>LINK IMAGEN</label>
                             <input value={ noticiaImagen } name="noticiaImagen" className="form-control" onChange={ onInputChange }/>
                         </div>
+                        <div className="form-group mb-4">
                             <label>Titulo de NOTICIA</label>
                             <input value={ noticiaTitulo } name="noticiaTitulo" className="form-control" onChange={ onInputChange }/>
                         </div>
                         <div className="form-group mb-4">
                             <label>DESCRIOCION NOTICIA</label>
-                            <input value={ noticiaDescripcion } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
+                            <textarea value={ noticiaDescripcion } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
                         </div>
                         <div className="form-group mb-4">
                             <label>REPORTERO ID</label>
@@ -168,17 +171,26 @@ export const AdminPanel = () => {
                     <div className={`${!verModal && 'd-none' }`}>
                         <Modal.Body>
                         <div className="form-group mb-4">
-                            <label>Noticias ID</label>
-                            <input defaultValue={ NOTICIA_ID } className="form-control" onChange={ onInputChange } disabled/>
+                            <label>LINK IMAGEN</label>
+                            <input defaultValue={ IMAGEN } name="noticiaImagen" className="form-control" disabled/>
                         </div>
                         <div className="form-group mb-4">
-                            <label>Noticias ID</label>
-                            <input defaultValue={ TITULO } className="form-control" onChange={ onInputChange } disabled/>
+                            <label>Titulo de NOTICIA</label>
+                            <input defaultValue={ TITULO } name="noticiaTitulo" className="form-control" disabled/>
                         </div>
                         <div className="form-group mb-4">
-                            <label>TITULO</label>
-                            <input defaultValue={ DESCRIPCION } className="form-control" onChange={ onInputChange } disabled/>
+                            <label>DESCRIOCION NOTICIA</label>
+                            <textarea defaultValue={ DESCRIPCION } name="noticiaDescripcion" className="form-control" disabled/>
                         </div>
+                        <div className="form-group mb-4">
+                            <label>REPORTERO ID</label>
+                            <input defaultValue={ REPORTERO } name="noticiaReportero" className="form-control" disabled/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>SUBCATEGORIA ID</label>
+                            <input defaultValue={ SUBCATEGORIA } name="noticiaSubcategoria" className="form-control" disabled/>
+                        </div>
+
                         </Modal.Body>
                                 <Modal.Footer>
                                 <Button className="btn btn-yellow mb-3"  variant="secondary" onClick={handleClose}>
@@ -191,23 +203,31 @@ export const AdminPanel = () => {
                     <div className={`${!updateModal && 'd-none' }`}>
                         <Modal.Body>
                         <div className="form-group mb-4">
-                            <label>Noticia ID</label>
-                            <input defaultValue={ NOTICIA_ID } className="form-control" onChange={ onInputChange } disabled/>
+                            <label>LINK IMAGEN</label>
+                            <input defaultValue={ IMAGEN } value={ noticiaImagen } name="noticiaImagen" className="form-control" onChange={ onInputChange }/>
                         </div>
                         <div className="form-group mb-4">
-                            <label>TITULO</label>
-                            <input value={ noticiaTitulo } defaultValue={ NOTICIA_ID } name="noticiaTitulo" className="form-control" onChange={ onInputChange }/>
+                            <label>Titulo de NOTICIA</label>
+                            <input defaultValue={ TITULO } value={ noticiaTitulo } name="noticiaTitulo" className="form-control" onChange={ onInputChange }/>
                         </div>
                         <div className="form-group mb-4">
-                            <label>DESCRIPCION NOTICIA</label>
-                            <input value={ noticiaDescripcion } defaultValue={ DESCRIPCION } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
+                            <label>DESCRIOCION NOTICIA</label>
+                            <textarea defaultValue={ DESCRIPCION } value={ noticiaDescripcion } name="noticiaDescripcion" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>REPORTERO ID</label>
+                            <input defaultValue={ REPORTERO } value={ noticiaReportero } name="noticiaReportero" className="form-control" onChange={ onInputChange }/>
+                        </div>
+                        <div className="form-group mb-4">
+                            <label>SUBCATEGORIA ID</label>
+                            <input defaultValue={ SUBCATEGORIA } value={ noticiaSubcategoria } name="noticiaSubcategoria" className="form-control" onChange={ onInputChange }/>
                         </div>
                         </Modal.Body>
                                 <Modal.Footer>
                                 <Button className="btn btn-yellow mb-3"  variant="secondary" onClick={handleClose}>
                                     Cerrar
                                 </Button>
-                                <Button className='btn btn-success mb-3' variant="primary" onClick={handleClose}>
+                                <Button className='btn btn-success mb-3' variant="primary" onClick={onUpdateNotcia}>
                                     Guardar Cambios
                                 </Button>
                         </Modal.Footer>
