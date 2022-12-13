@@ -17,7 +17,6 @@ export const SingleNew = () => {
     dispatch(getNoticiaById(id));
   }, [])
 
-  console.log(usuario.US_USUARIO_ID)
   const { onInputChange, formState } = useForm({
     calificacion: "1",
   });

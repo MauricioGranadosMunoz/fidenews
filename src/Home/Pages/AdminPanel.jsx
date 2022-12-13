@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { HomeLayout } from '../layout/HomeLayout'
 import { useDispatch, useSelector } from 'react-redux'
-import { eliminarNoticia, getAllNoticias, getNoticiaById, getNoticiasByFilter, guardarNoticia, setModalState } from '../../store/slices/news';
+import { eliminarNoticia, getAllNoticias, getNoticiaById, getNoticiasByFilter, guardarNoticia, setModalState, updateNoticia } from '../../store/slices/news';
 import { Button, Card, Modal } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useForm } from '../../hooks/useForm';
@@ -16,7 +16,7 @@ export const AdminPanel = () => {
 
     const { noticiaSelected = { }, modalOpen, noticias } = useSelector(state => state.news);
     const { NOTICIA_ID, IMAGEN, TITULO, DESCRIPCION, PROMEDIO, REPORTERO, SUBCATEGORIA, CATEGORIA, NT_FECHA_CREACION, VISTAS } = noticiaSelected;
-    const { noticiaTitulo, noticiaDescripcion, noticiaImagen, noticiaSubcategoria, noticiaReportero, onInputChange, formState } = useForm({
+    const { noticiaId, noticiaTitulo, noticiaDescripcion, noticiaImagen, noticiaSubcategoria, noticiaReportero, onInputChange, formState } = useForm({
         noticiaId: NOTICIA_ID,
         noticiaImagen: IMAGEN,
         noticiaTitulo: TITULO,
@@ -77,7 +77,8 @@ export const AdminPanel = () => {
         handleClose();
     }
     const onUpdateNotcia = (e) => {
-        dispatch(getAllNoticias(formState));
+        console.log(formState)
+        dispatch(updateNoticia({ ...formState, NOTICIA_ID }));
         handleClose();
     }
 
@@ -202,6 +203,10 @@ export const AdminPanel = () => {
 
                     <div className={`${!updateModal && 'd-none' }`}>
                         <Modal.Body>
+                        <div className="form-group mb-4">
+                            <label>NOTICIA ID</label>
+                            <input defaultValue={ NOTICIA_ID } value={ noticiaId } name="noticiaImagen" className="form-control" disabled/>
+                        </div>
                         <div className="form-group mb-4">
                             <label>LINK IMAGEN</label>
                             <input defaultValue={ IMAGEN } value={ noticiaImagen } name="noticiaImagen" className="form-control" onChange={ onInputChange }/>
